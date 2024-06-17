@@ -1,0 +1,20 @@
+.slider-container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    overflow: hidden; /* 画面の端から出てくるようにするためにoverflowをhiddenに設定 */
+}
+
+.slick-list {
+    margin: 0 -15px; /* 両サイドの余白を調整 */
+}
+
+.slick-slide > div {
+    margin: 0 15px; /* スライド間のスペースを調整 */
+}
+
+.slider-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
