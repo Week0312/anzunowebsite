@@ -1,4 +1,4 @@
-interface Product {
+export interface Product {
     id: string;
     name: string;
     description: string;
@@ -6,7 +6,7 @@ interface Product {
     image: string;
 }
 
-const products: Product[] = [
+export const products: Product[] = [
     {
         id: "1",
         name: "優雅な花瓶",
@@ -27,4 +27,9 @@ const products: Product[] = [
 export async function getProductById(id: string): Promise<Product | null> {
     // 実際のアプリケーションでは、ここでデータベースやAPIからデータを取得します
     return products.find((product) => product.id === id) || null;
+}
+
+// すべての製品を取得する関数を追加
+export async function getAllProducts(): Promise<Product[]> {
+    return products;
 }

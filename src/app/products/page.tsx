@@ -1,12 +1,21 @@
-import { Metadata } from "next";
-import ProductsContent from "./ProductsContent";
+import { getAllProducts } from "@/lib/products";
+import Link from "next/link";
 
-export const metadata: Metadata = {
-    title: "製品一覧",
-    description:
-        "Your Company Nameが提供する製品とサービスの詳細をご覧ください。",
-};
+export default async function ProductsPage() {
+    const products = await getAllProducts();
 
-export default function ProductsPage() {
-    return <ProductsContent />;
+    return (
+        <div>
+            <h1>商品一覧</h1>
+            <ul>
+                {products.map((product) => (
+                    <li key={product.id}>
+                        <Link href={`/products/${product.id}`}>
+                            {product.name}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 }
