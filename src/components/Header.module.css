@@ -1,0 +1,48 @@
+.header {
+    width: 100%; /* 幅を100%に設定 */
+    background-color: #f9fafb; /* 白に近いライトグレー */
+    color: #1f2937; /* ダークグレーの文字色 */
+    padding: 16px 0; /* 上下のパディングを追加 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽いシャドウで浮き上がりを演出 */
+}
+
+.nav {
+    display: flex;
+    justify-content: center; /* 中央に配置 */
+}
+
+.navLinks {
+    display: flex;
+    gap: 16px;
+}
+
+.navLink {
+    position: relative;
+    font-size: 1.2rem;
+    font-weight: 400; /* 細めのフォントで見やすく */
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.3s, border-bottom 0.3s;
+}
+
+.navLink::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #1f2937;
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+}
+
+.navLink:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.navLink:hover {
+    color: #4b5563; /* 少し明るめのダークグレー */
+}

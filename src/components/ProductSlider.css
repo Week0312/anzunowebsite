@@ -1,20 +1,35 @@
-.slider-container {
+.swiper-container {
     width: 100%;
-    max-width: 800px;
-    margin: auto;
+    margin: 0; /* 余白をなくすためにmarginを0に設定 */
     overflow: hidden; /* 画面の端から出てくるようにするためにoverflowをhiddenに設定 */
+    padding: 0; /* 余白をなくすためにpaddingを0に設定 */
 }
 
-.slick-list {
-    margin: 0 -15px; /* 両サイドの余白を調整 */
-}
-
-.slick-slide > div {
-    margin: 0 15px; /* スライド間のスペースを調整 */
+.swiper-wrapper {
+    transition-timing-function: linear; /* スライドの動きを等速に設定 */
 }
 
 .slider-image {
-    width: 100%;
+    height: auto; /* 画像の高さを自動調整 */
+    width: 100%; /* 画像の幅を100%に設定 */
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-container {
+    overflow: hidden;
+}
+
+.swiper-wrapper {
+    transition-timing-function: linear !important;
+}
+
+.slider-image {
     height: auto;
-    object-fit: cover;
+    max-width: 100%;
+    display: block;
 }

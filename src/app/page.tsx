@@ -1,22 +1,12 @@
-"use client";
+import { Metadata } from "next";
+import HomeContent from "./HomeContent";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Slider from "../components/Slider"; // スライダーコンポーネントを追加
-
-const Home = () => {
-    return (
-        <div>
-            <Header />
-            <main className="p-4">
-                <h1 className="text-2xl font-bold mb-4">
-                    Welcome to Our Website
-                </h1>
-                <Slider />
-            </main>
-            <Footer />
-        </div>
-    );
+export const metadata: Metadata = {
+    title: "ホーム",
+    description:
+        "Your Company Nameへようこそ。私たちの製品とサービスについてご覧ください。",
 };
 
-export default Home;
+export default function HomePage() {
+    return <HomeContent />;
+}
