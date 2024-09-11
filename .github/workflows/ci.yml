@@ -11,12 +11,12 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4 # v2から v4 に更新
 
             - name: Use Node.js
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v4 # v2から v4 に更新
               with:
-                  node-version: "18"
+                  node-version: "20" # '18'から '20' に更新
 
             - name: Install dependencies
               run: yarn install
@@ -27,7 +27,7 @@ jobs:
             - name: Build
               run: yarn build
 
-        # デプロイステップ（例：Vercelを使用する場合）
+        # デプロイステップ（必要に応じてコメントアウトを解除）
         # - name: Deploy to Vercel
         #   uses: amondnet/vercel-action@v20
         #   with:
