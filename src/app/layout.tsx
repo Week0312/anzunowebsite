@@ -2,6 +2,7 @@
 
 import { Inter } from "next/font/google";
 import { AppProvider, useAppContext } from "../context/AppContext";
+import { CartProvider } from "../context/CartContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -34,7 +35,9 @@ export default function RootLayout({
 }) {
     return (
         <AppProvider>
-            <RootLayoutContent>{children}</RootLayoutContent>
+            <CartProvider>
+                <RootLayoutContent>{children}</RootLayoutContent>
+            </CartProvider>
         </AppProvider>
     );
 }

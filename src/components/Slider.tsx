@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { Autoplay } from "swiper/modules";
 
-// スタイルのインポートを1箇所にまとめる
 import "swiper/css";
 import "swiper/css/autoplay";
 
-// このインポートが必要かどうか確認してください。必要なければ削除してください。
 import "./ProductSlider.css";
 
 interface SliderProps {
@@ -19,56 +17,56 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = () => {
     const swiperRef = useRef<SwiperType | null>(null);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => {
-            if (swiperRef.current) {
-                swiperRef.current.update();
-            }
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
+        if (typeof window !== "undefined") {
+            setIsClient(true);
+        }
     }, []);
+
+    const swiperConfig = {
+        modules: [Autoplay],
+        spaceBetween: 20,
+        slidesPerView: "auto",
+        loop: true,
+        autoplay: {
+            delay: 0,
+            disableOnInteraction: false,
+        },
+        speed: 5000,
+        allowTouchMove: false,
+        freeMode: {
+            enabled: true,
+            momentumRatio: 0.25,
+            momentumVelocityRatio: 0.25,
+        },
+        watchSlidesProgress: true,
+        grabCursor: false,
+    };
+
+    if (!isClient) {
+        return (
+            <div className="swiper-container" aria-label="製品スライダー">
+                Loading...
+            </div>
+        );
+    }
 
     return (
         <div className="swiper-container" aria-label="製品スライダー">
-            <Swiper
-                onSwiper={(swiper) => {
-                    swiperRef.current = swiper;
-                }}
-                modules={[Autoplay]}
-                spaceBetween={10}
-                loop={true}
-                autoplay={{
-                    delay: 0,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: false,
-                }}
-                speed={8000}
-                allowTouchMove={false}
-                slidesPerView="auto"
-                freeMode={{
-                    enabled: true,
-                    momentumBounce: false,
-                }}
-                watchSlidesProgress={true}
-                grabCursor={false}
-                cssMode={false}
-            >
+            <Swiper {...swiperConfig}>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <SwiperSlide key={num} style={{ width: "auto" }}>
-                        <Image
-                            src={`/images/photo${num}.jpg`}
-                            alt={`製品 ${num} の画像`}
-                            width={300}
-                            height={200}
-                            className="slider-image"
-                            priority={num <= 4}
-                        />
+                    <SwiperSlide key={num}>
+                        <div className="relative w-full pt-[75%]">
+                            <Image
+                                src={`/images/photo${num}.jpg`}
+                                alt={`製品 ${num} の画像`}
+                                layout="fill"
+                                objectFit="cover"
+                                className="slider-image rounded-lg"
+                            />
+                        </div>
                     </SwiperSlide>
                 ))}
             </Swiper>
