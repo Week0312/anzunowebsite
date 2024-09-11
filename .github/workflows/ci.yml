@@ -16,7 +16,7 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v4 # v2から v4 に更新
               with:
-                  node-version: "20" # '18'から '20' に更新
+                  node-version: "20" # 最新の LTS バージョンを使用
 
             - name: Install dependencies
               run: yarn install
