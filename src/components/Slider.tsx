@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { Autoplay } from "swiper/modules";
+import type { SwiperOptions } from "swiper/types";
 
 import "swiper/css";
 import "swiper/css/autoplay";
@@ -25,7 +26,7 @@ const Slider: React.FC<SliderProps> = () => {
         }
     }, []);
 
-    const swiperConfig = {
+    const swiperConfig: SwiperOptions = {
         modules: [Autoplay],
         spaceBetween: 20,
         slidesPerView: "auto",

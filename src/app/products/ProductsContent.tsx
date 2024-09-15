@@ -4,11 +4,30 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-const products = [
-    // ... 製品データは変更なし ...
+// Product 型を定義
+type Product = {
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    image: string;
+};
+
+// products 配列に型を指定
+const products: Product[] = [
+    // ... 製品データはここに記述 ...
+    // 例：
+    {
+        id: "1",
+        name: "商品1",
+        description: "商品1の説明",
+        price: "¥1,000",
+        image: "/images/product1.jpg",
+    },
+    // 他の製品データ...
 ];
 
-const ProductsContent = () => {
+const ProductsContent: React.FC = () => {
     return (
         <div className="space-y-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">

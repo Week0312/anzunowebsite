@@ -4,14 +4,21 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 
+// CustomerInfo の型を定義
+type CustomerInfo = {
+    name: string | null;
+    email: string | null;
+    address: string | null;
+};
+
 export default function OrderConfirmPage() {
     const { cart, clearCart } = useCart();
-    const [customerInfo, setCustomerInfo] = useState(null);
+    const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
 
     useEffect(() => {
         // URLからクエリパラメータを取得
         const params = new URLSearchParams(window.location.search);
-        const info = {
+        const info: CustomerInfo = {
             name: params.get("name"),
             email: params.get("email"),
             address: params.get("address"),

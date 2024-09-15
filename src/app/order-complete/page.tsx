@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function OrderCompletePage() {
-    const [orderId, setOrderId] = useState<string | null>(null);
+// OrderCompleteContent コンポーネント
+const OrderCompleteContent = () => {
     const searchParams = useSearchParams();
-
-    useEffect(() => {
-        setOrderId(searchParams.get("orderId"));
-    }, [searchParams]);
+    const orderId = searchParams.get("orderId");
 
     return (
         <div className="container mx-auto px-4 py-8 text-center">
@@ -29,4 +26,16 @@ export default function OrderCompletePage() {
             </Link>
         </div>
     );
+};
+
+// メインのページコンポーネント
+export default function OrderCompletePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <OrderCompleteContent />
+        </Suspense>
+    );
 }
+
+// このページを動的レンダリングに設定
+export const dynamic = "force-dynamic";

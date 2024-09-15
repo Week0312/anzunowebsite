@@ -5,15 +5,25 @@ import { useCart } from "@/context/CartContext";
 import { getProductById } from "@/lib/products";
 import { useState, useEffect } from "react";
 
+// Product 型を定義
+type Product = {
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    image: string;
+    // 他の必要なプロパティがあれば追加してください
+};
+
 export default function ProductPage({ params }: { params: { id: string } }) {
-    const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState<Product | null>(null);
     const { addToCart } = useCart();
     const [isAdded, setIsAdded] = useState(false);
 
     useEffect(() => {
         async function fetchProduct() {
             const fetchedProduct = await getProductById(params.id);
-            setProduct(fetchedProduct);
+            setProduct(fetchedProduct as Product);
         }
         fetchProduct();
     }, [params.id]);
