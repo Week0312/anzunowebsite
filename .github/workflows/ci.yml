@@ -9,7 +9,6 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-
         steps:
             - uses: actions/checkout@v4
 
@@ -48,10 +47,10 @@ jobs:
                   name: build
                   path: .next
 
-        # デプロイステップ（必要に応じてコメントアウトを解除）
-        # - name: Deploy to Vercel
-        #   uses: amondnet/vercel-action@v20
-        #   with:
-        #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        #     vercel-org-id: ${{ secrets.ORG_ID}}
-        #     vercel-project-id: ${{ secrets.PROJECT_ID}}
+            # デプロイステップ（必要に応じてコメントアウトを解除）
+            # - name: Deploy to Vercel
+            #   uses: amondnet/vercel-action@v20
+            #   with:
+            #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+            #     vercel-org-id: ${{ secrets.ORG_ID}}
+            #     vercel-project-id: ${{ secrets.PROJECT_ID}}
