@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    transpilePackages: ["swiper", "dom7", "ssr-window"],
+    swcMinify: true,
+    compiler: {
+        styledComponents: true,
+    },
 };
 
 export default nextConfig;

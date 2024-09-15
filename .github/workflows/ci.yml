@@ -11,21 +11,42 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v4 # v2から v4 に更新
+            - uses: actions/checkout@v4
 
             - name: Use Node.js
-              uses: actions/setup-node@v4 # v2から v4 に更新
+              uses: actions/setup-node@v4
               with:
-                  node-version: "20" # 最新の LTS バージョンを使用
+                  node-version: "20"
+
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+            - name: Cache yarn dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
 
             - name: Install dependencies
-              run: yarn install
+              run: yarn install --frozen-lockfile
 
             - name: Run tests
-              run: yarn test
+              run: yarn test --verbose
 
             - name: Build
               run: yarn build
+              env:
+                  # 必要な環境変数をここに追加
+                  # 例: DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: build
+                  path: .next
 
         # デプロイステップ（必要に応じてコメントアウトを解除）
         # - name: Deploy to Vercel
