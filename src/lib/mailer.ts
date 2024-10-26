@@ -1,4 +1,5 @@
 // src/lib/mailer.ts
+/// <reference types="nodemailer" />
 
 import nodemailer from "nodemailer";
 

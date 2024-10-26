@@ -37,10 +37,13 @@ export default function CartPage() {
                 >
                     <div className="w-24 h-24 relative mr-4">
                         <Image
-                            src={item.image}
-                            alt={item.name}
-                            layout="fill"
-                            objectFit="cover"
+                            src={item.image || "/images/placeholder.jpg"}
+                            alt={item.name || "商品画像"}
+                            fill
+                            sizes="96px"
+                            className="object-cover rounded"
+                            quality={75}
+                            loading="lazy"
                         />
                     </div>
                     <div className="flex-grow">
@@ -53,6 +56,7 @@ export default function CartPage() {
                                 updateQuantity(item.id, item.quantity - 1)
                             }
                             className="bg-gray-200 px-2 py-1 rounded"
+                            aria-label={`${item.name}の数量を減らす`}
                         >
                             -
                         </button>
@@ -62,6 +66,7 @@ export default function CartPage() {
                                 updateQuantity(item.id, item.quantity + 1)
                             }
                             className="bg-gray-200 px-2 py-1 rounded"
+                            aria-label={`${item.name}の数量を増やす`}
                         >
                             +
                         </button>
@@ -69,6 +74,7 @@ export default function CartPage() {
                     <button
                         onClick={() => removeFromCart(item.id)}
                         className="ml-4 text-red-500 hover:text-red-700"
+                        aria-label={`${item.name}をカートから削除`}
                     >
                         削除
                     </button>

@@ -1,0 +1,31 @@
+# pre-commitフックの内容を更新
+cat > .husky/pre-commit << 'EOL'
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '🏗️👷 Styling, testing and building your project before committing'
+
+# TypeScriptの型チェック
+yarn type-check ||
+(
+    echo '❌ TypeScript Check Failed.'
+    false;
+)
+
+# ESLintでコードをチェック
+yarn lint ||
+(
+    echo '❌ ESLint Check Failed.'
+    false;
+)
+
+# テストを実行
+yarn test ||
+(
+    echo '❌ Tests Failed.'
+    false;
+)
+
+# 成功メッセージ
+echo '✅ All checks passed'
+EOL

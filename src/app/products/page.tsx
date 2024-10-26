@@ -18,11 +18,14 @@ export default async function ProductsPage() {
                     >
                         <div className="relative h-64">
                             <Image
-                                src={product.image}
-                                alt={product.name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="w-full h-full object-cover" // ホバー効果を削除
+                                src={product.image || "/images/placeholder.jpg"} // 製品の画像パスを使用、ない場合はプレースホルダー
+                                alt={product.name || "商品画像"} // 製品名をalt textとして使用
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover"
+                                quality={75}
+                                // product.idがstring型なので、比較を修正
+                                priority={product.id === "1"} // 最初の画像のみpriorityを設定
                             />
                         </div>
                         <div className="p-4">

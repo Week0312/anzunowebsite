@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 // OrderCompleteContent コンポーネント
 const OrderCompleteContent = () => {
     const searchParams = useSearchParams();
-    const orderId = searchParams.get("orderId");
+    const orderId = searchParams?.get("orderId") ?? "";
 
     return (
         <div className="container mx-auto px-4 py-8 text-center">

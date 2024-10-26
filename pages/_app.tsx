@@ -2,7 +2,8 @@ import type { AppProps } from "next/app";
 import Link from "next/link";
 import { AuthProvider, useAuth } from "../src/contexts/AuthContext";
 
-function Navigation() {
+// NavigationコンポーネントをAuthProviderの中で使用するためのラッパー
+const NavigationWithAuth = () => {
     const { isAuthenticated, logout } = useAuth();
 
     return (
@@ -30,19 +31,16 @@ function Navigation() {
                         </li>
                     </>
                 )}
-                {/* 他のナビゲーションリンクをここに追加 */}
             </ul>
         </nav>
     );
-}
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <AuthProvider>
-            <div>
-                <Navigation />
-                <Component {...pageProps} />
-            </div>
+            <NavigationWithAuth />
+            <Component {...pageProps} />
         </AuthProvider>
     );
 }

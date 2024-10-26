@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+    ReactNode,
+    useEffect,
+} from "react";
 
 type AppContextType = {
     darkMode: boolean;
@@ -14,21 +20,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
     const [darkMode, setDarkMode] = useState(false);
 
+    // ダークモード設定をローカルストレージから読み込む
+    useEffect(() => {
+        const savedMode = localStorage.getItem("darkMode");
+        if (savedMode !== null) {
+            setDarkMode(savedMode === "true");
+        }
+    }, []);
+
+    // ダークモード切り替え時の処理
     const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-        console.log("Dark mode toggled:", !darkMode);
+        setDarkMode((prev) => {
+            const newMode = !prev;
+            localStorage.setItem("darkMode", String(newMode));
+            // HTMLのdata-theme属性を更新
+            document.documentElement.classList.toggle("dark", newMode);
+            return newMode;
+        });
     };
-    <div
-        className={`p-4 ${
-            darkMode ? "bg-black text-white" : "bg-white text-black"
-        }`}
-    >
-        Dark Mode: {darkMode ? "On" : "Off"}
-    </div>;
 
     return (
         <AppContext.Provider value={{ darkMode, toggleDarkMode }}>
-            {children}
+            <div className={darkMode ? "dark" : ""}>{children}</div>
         </AppContext.Provider>
     );
 };

@@ -22,7 +22,7 @@ jobs:
               run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
             - name: Cache yarn dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -37,9 +37,13 @@ jobs:
 
             - name: Build
               run: yarn build
+              env:
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
             - name: Upload build artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: build
                   path: .next

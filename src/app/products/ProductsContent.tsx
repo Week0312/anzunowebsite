@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,8 +43,11 @@ const ProductsContent: React.FC = () => {
                                 <Image
                                     src={product.image}
                                     alt={product.name}
-                                    layout="fill"
-                                    objectFit="cover"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    priority={product.id === "1"}
+                                    className="object-cover"
+                                    quality={75}
                                 />
                             </div>
                             <div className="p-4">

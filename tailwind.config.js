@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    // [変更] darkModeの設定を配列形式に変更
     darkMode: ["class"],
     content: [
-        "./pages/**/*.{js,jsx,ts,tsx}",
-        "./components/**/*.{js,jsx,ts,tsx}",
-        "./app/**/*.{js,jsx,ts,tsx}",
-        "./src/**/*.{js,jsx,ts,tsx}",
+        // [変更] TypeScriptファイルのみを対象にするように修正
+        "./pages/**/*.{ts,tsx}",
+        "./components/**/*.{ts,tsx}",
+        "./app/**/*.{ts,tsx}",
+        "./src/**/*.{ts,tsx}",
+        "./lib/**/*.{ts,tsx}", // [追加] libディレクトリを追加
     ],
     prefix: "",
     theme: {
@@ -17,8 +20,9 @@ module.exports = {
             },
         },
         extend: {
+            // [変更] フォントファミリーの設定を更新
             fontFamily: {
-                sans: ["Noto Sans JP", "sans-serif"],
+                sans: ["var(--font-noto-sans)", "Noto Sans JP", "sans-serif"],
                 serif: ["Noto Serif JP", "serif"],
             },
             colors: {
@@ -28,6 +32,9 @@ module.exports = {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
                 primary: {
+                    // [変更] DEFAULTとforegroundを追加
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
                     50: "#f0f9ff",
                     100: "#e0f2fe",
                     200: "#bae6fd",
@@ -41,6 +48,8 @@ module.exports = {
                     950: "#082f49",
                 },
                 secondary: {
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
                     50: "#fdf2f8",
                     100: "#fce7f3",
                     200: "#fbcfe8",
@@ -53,33 +62,9 @@ module.exports = {
                     900: "#831843",
                     950: "#500724",
                 },
-                success: {
-                    50: "#f0fdf4",
-                    100: "#dcfce7",
-                    200: "#bbf7d0",
-                    300: "#86efac",
-                    400: "#4ade80",
-                    500: "#22c55e",
-                    600: "#16a34a",
-                    700: "#15803d",
-                    800: "#166534",
-                    900: "#14532d",
-                    950: "#052e16",
-                },
-                warning: {
-                    50: "#fffbeb",
-                    100: "#fef3c7",
-                    200: "#fde68a",
-                    300: "#fcd34d",
-                    400: "#fbbf24",
-                    500: "#f59e0b",
-                    600: "#d97706",
-                    700: "#b45309",
-                    800: "#92400e",
-                    900: "#78350f",
-                    950: "#451a03",
-                },
                 destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
                     50: "#fef2f2",
                     100: "#fee2e2",
                     200: "#fecaca",
@@ -130,5 +115,6 @@ module.exports = {
             },
         },
     },
+    // [変更] プラグインを必要最小限に変更
     plugins: [require("tailwindcss-animate")],
 };

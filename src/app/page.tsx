@@ -25,18 +25,25 @@ export default async function HomePage() {
                     新着作品
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {newArrivals.map((product) => (
+                    {newArrivals.map((product, index) => (
                         <div
                             key={product.id}
                             className="bg-white dark:bg-gray-700 shadow-md rounded-lg overflow-hidden"
                         >
                             <div className="relative h-64">
                                 <Image
-                                    src={product.image}
-                                    alt={product.name}
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="w-full h-full object-cover" // ホバー効果を削除
+                                    src={
+                                        product.image ||
+                                        "/images/placeholder.jpg"
+                                    }
+                                    alt={product.name || "新着商品の画像"}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                    className="object-cover"
+                                    quality={75}
+                                    priority={index < 3} // 最初の3つの画像を優先的に読み込む
+                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSAyUC0zLy0tMzJGQj82RVg/OkNWRkdYTFFTW0BNYWVhZkVGXnVed2P/2wBDARUXFx4aHR4eHUNDRkNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0P/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAb/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                                    placeholder="blur"
                                 />
                             </div>
                             <div className="p-4">

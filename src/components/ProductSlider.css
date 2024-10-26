@@ -1,25 +1,179 @@
+/* ベースコンテナのスタイル */
 .swiper-container {
     width: 100%;
     overflow: hidden;
     padding: 20px 0;
+    position: relative; /* 追加: ローディング表示のための位置の基準 */
+    background: transparent;
+    transition: background-color 0.3s ease;
 }
 
+/* Swiperのラッパースタイル */
 .swiper-wrapper {
     transition-timing-function: linear !important;
+    will-change: transform; /* パフォーマンス最適化 */
 }
 
+/* スライドのベーススタイル */
 .swiper-slide {
-    width: 300px; /* スライドの幅を固定 */
+    width: 300px;
     height: auto;
+    position: relative;
+    transform-origin: center center;
+    backface-visibility: hidden; /* パフォーマンス最適化 */
 }
 
-.slider-image {
-    width: 100%;
-    height: 100%;
+/* スライド内の画像コンテナ */
+.swiper-slide > div {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    .swiper-slide > div {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Next.js Image コンポーネントのスタイル */
+.swiper-slide img {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transform: scale(1);
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
 }
 
-.slider-image:hover {
-    transform: scale(1.05);
+/* ホバーエフェクト - 標準デバイス */
+@media (hover: hover) {
+    .swiper-slide:hover img {
+        transform: scale(1.05);
+    }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .swiper-slide {
+        width: 250px;
+    }
+}
+
+/* アスペクト比の維持 */
+.swiper-slide > div::before {
+    content: "";
+    display: block;
+    padding-top: 75%;
+}
+
+/* ローディング状態のスタイル */
+.swiper-slide.loading > div {
+    animation: pulse 1.5s infinite;
+}
+
+/* エラー状態のスタイル */
+.swiper-slide img.error {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+/* アニメーション定義 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    50% {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    100% {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* アクセシビリティ - モーション軽減 */
+@media (prefers-reduced-motion: reduce) {
+    .swiper-slide img {
+        transition: none;
+    }
+
+    .swiper-slide:hover img {
+        transform: none;
+    }
+
+    .swiper-wrapper {
+        transition: none !important;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes pulse {
+        0%,
+        50%,
+        100% {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    }
+}
+
+/* タッチデバイスの最適化 */
+@media (hover: none) {
+    .swiper-slide img {
+        transform: none !important;
+    }
+}
+
+/* ローディングインジケータ */
+.swiper-loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.swiper-loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* フォーカス状態のスタイル */
+.swiper-slide:focus-within > div {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
 }

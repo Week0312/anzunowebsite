@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/lib/products";
 
@@ -11,63 +13,66 @@ interface CartContextType {
     removeFromCart: (productId: string) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     clearCart: () => void;
+    totalItems: number;
+    totalPrice: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const useCart = () => {
-    const context = useContext(CartContext);
-    if (!context) {
-        throw new Error("useCart must be used within a CartProvider");
-    }
-    return context;
-};
-
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
-    const [cart, setCart] = useState<CartItem[]>([]);
-
-    useEffect(() => {
-        const savedCart = localStorage.getItem("cart");
-        if (savedCart) {
-            setCart(JSON.parse(savedCart));
+export function CartProvider({ children }: { children: React.ReactNode }) {
+    const [cart, setCart] = useState<CartItem[]>(() => {
+        // クライアントサイドでのみローカルストレージを使用
+        if (typeof window !== "undefined") {
+            const savedCart = localStorage.getItem("cart");
+            return savedCart ? JSON.parse(savedCart) : [];
         }
-    }, []);
+        return [];
+    });
 
+    // カートの合計数と合計金額を計算
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cart.reduce(
+        (sum, item) =>
+            sum + Number(item.price.replace(/[^0-9.-]+/g, "")) * item.quantity,
+        0
+    );
+
+    // カートの変更をローカルストレージに保存
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
 
     const addToCart = (product: Product) => {
-        setCart((prevCart) => {
-            const existingItem = prevCart.find(
+        setCart((currentCart) => {
+            const existingItem = currentCart.find(
                 (item) => item.id === product.id
             );
             if (existingItem) {
-                return prevCart.map((item) =>
+                return currentCart.map((item) =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             }
-            return [...prevCart, { ...product, quantity: 1 }];
+            return [...currentCart, { ...product, quantity: 1 }];
         });
     };
 
     const removeFromCart = (productId: string) => {
-        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+        setCart((currentCart) =>
+            currentCart.filter((item) => item.id !== productId)
+        );
     };
 
     const updateQuantity = (productId: string, quantity: number) => {
-        setCart((prevCart) =>
-            prevCart
-                .map((item) =>
-                    item.id === productId
-                        ? { ...item, quantity: Math.max(0, quantity) }
-                        : item
-                )
-                .filter((item) => item.quantity > 0)
+        if (quantity < 1) {
+            removeFromCart(productId);
+            return;
+        }
+        setCart((currentCart) =>
+            currentCart.map((item) =>
+                item.id === productId ? { ...item, quantity } : item
+            )
         );
     };
 
@@ -83,9 +88,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
                 removeFromCart,
                 updateQuantity,
                 clearCart,
+                totalItems,
+                totalPrice,
             }}
         >
             {children}
         </CartContext.Provider>
     );
-};
+}
+
+export function useCart() {
+    const context = useContext(CartContext);
+    if (context === undefined) {
+        throw new Error("useCart must be used within a CartProvider");
+    }
+    return context;
+}

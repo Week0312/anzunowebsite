@@ -19,6 +19,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     const [product, setProduct] = useState<Product | null>(null);
     const { addToCart } = useCart();
     const [isAdded, setIsAdded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         async function fetchProduct() {
@@ -43,14 +44,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="relative h-96 md:h-full">
+                <div className="relative aspect-square w-full md:aspect-[4/3] lg:aspect-[16/9]">
                     <Image
                         src={product.image}
                         alt={product.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-lg"
+                        fill
+                        priority
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-contain"
+                        quality={85}
+                        onError={() => setImageError(true)}
                     />
+                    {imageError && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                            <span className="text-gray-500 dark:text-gray-400">
+                                画像を読み込めませんでした
+                            </span>
+                        </div>
+                    )}
                 </div>
                 <div>
                     <h1 className="text-3xl font-bold mb-4">{product.name}</h1>

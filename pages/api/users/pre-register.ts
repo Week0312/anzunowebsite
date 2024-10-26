@@ -14,8 +14,8 @@ export default async function handler(
         console.log("Request body:", req.body);
         const { email } = req.body;
 
-        if (!email) {
-            return res.status(400).json({ message: "Email is required" });
+        if (!email || typeof email !== "string") {
+            return res.status(400).json({ message: "Valid email is required" });
         }
 
         console.log("Checking for existing user");
@@ -41,7 +41,11 @@ export default async function handler(
         });
 
         console.log("Sending confirmation email");
-        const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/register?token=${confirmationToken}`;
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+        if (!baseUrl) {
+            throw new Error("NEXT_PUBLIC_BASE_URL is not defined");
+        }
+        const confirmUrl = `${baseUrl}/register?token=${confirmationToken}`;
         await sendMail({
             to: email,
             subject: "Complete your registration",
@@ -62,7 +66,10 @@ export default async function handler(
         console.error("Pre-registration error:", error);
         res.status(500).json({
             message: "Error during pre-registration",
-            error: error.message,
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "An unknown error occurred",
         });
     }
 }

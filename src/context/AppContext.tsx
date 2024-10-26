@@ -9,26 +9,28 @@ type AppContextType = {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({
-    children,
-}) => {
+interface AppProviderProps {
+    children: ReactNode;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const [darkMode, setDarkMode] = useState(false);
 
     const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
+        setDarkMode((prevMode) => !prevMode);
         console.log("Dark mode toggled:", !darkMode);
     };
-    <div
-        className={`p-4 ${
-            darkMode ? "bg-black text-white" : "bg-white text-black"
-        }`}
-    >
-        Dark Mode: {darkMode ? "On" : "Off"}
-    </div>;
 
     return (
         <AppContext.Provider value={{ darkMode, toggleDarkMode }}>
-            {children}
+            <div
+                className={`p-4 ${
+                    darkMode ? "bg-black text-white" : "bg-white text-black"
+                }`}
+            >
+                Dark Mode: {darkMode ? "On" : "Off"}
+                {children}
+            </div>
         </AppContext.Provider>
     );
 };
