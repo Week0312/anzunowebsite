@@ -29,4 +29,4 @@ class CacheHandler {
     }
 }
 
-module.exports = CacheHandler;
+export default CacheHandler;
