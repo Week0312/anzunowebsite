@@ -11,13 +11,11 @@ const nextConfig = {
 
     experimental: {
         optimizeCss: true,
-        // src/libディレクトリへのパスを指定
-        incrementalCacheHandlerPath: join(
-            __dirname,
-            "./src/lib/cache-handler.js"
-        ),
         outputFileTracingRoot: undefined,
     },
+
+    // experimentalから移動してcacheHandlerとして設定
+    cacheHandler: join(__dirname, "./src/lib/cache-handler.js"),
 
     images: {
         formats: ["image/avif", "image/webp"],
