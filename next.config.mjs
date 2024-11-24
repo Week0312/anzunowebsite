@@ -15,7 +15,7 @@ const nextConfig = {
     },
 
     // experimentalから移動してcacheHandlerとして設定
-    cacheHandler: join(__dirname, "./src/lib/cache-handler.js"),
+    cacheHandler: join(__dirname, "./src/lib/cache-handler.mjs"),
 
     images: {
         formats: ["image/avif", "image/webp"],

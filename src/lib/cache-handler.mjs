@@ -1,4 +1,4 @@
-export default class CacheHandler {
+class CacheHandler {
     constructor(options) {
         this.options = options;
         this.cache = new Map();
@@ -28,3 +28,5 @@ export default class CacheHandler {
         }
     }
 }
+
+module.exports = CacheHandler;
