@@ -1,6 +1,6 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../src/contexts/AuthContext";
+import { useAuth } from "../src/context/AuthContext";
 import Head from "next/head";
 
 export default function Login() {
@@ -17,20 +17,9 @@ export default function Login() {
         setIsLoading(true);
 
         try {
-            const response = await fetch("/api/users/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                login(data.token);
-                router.push("/");
-            } else {
-                setError(data.message || "Login failed");
-            }
+            // まずAuthContextのlogin関数を呼び出す
+            await login(email, password);
+            router.push("/");
         } catch (error) {
             console.error("Login error:", error);
             setError("An error occurred during login");

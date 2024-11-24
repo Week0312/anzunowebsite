@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import Link from "next/link";
-import { AuthProvider, useAuth } from "../src/contexts/AuthContext";
+import { AuthProvider, useAuth } from "../src/context/AuthContext";
 
 // NavigationコンポーネントをAuthProviderの中で使用するためのラッパー
 const NavigationWithAuth = () => {

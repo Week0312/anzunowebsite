@@ -1,44 +1,47 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-type AppContextType = {
+interface AppContextType {
     darkMode: boolean;
     toggleDarkMode: () => void;
-};
+}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-interface AppProviderProps {
-    children: ReactNode;
-}
+export function AppProvider({ children }: { children: React.ReactNode }) {
+    const [darkMode, setDarkMode] = useState(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("darkMode");
+            return saved ? JSON.parse(saved) : false;
+        }
+        return false;
+    });
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-    const [darkMode, setDarkMode] = useState(false);
+    useEffect(() => {
+        localStorage.setItem("darkMode", JSON.stringify(darkMode));
+        if (darkMode) {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+    }, [darkMode]);
 
     const toggleDarkMode = () => {
-        setDarkMode((prevMode) => !prevMode);
-        console.log("Dark mode toggled:", !darkMode);
+        setDarkMode((prev: boolean) => !prev);
     };
 
     return (
         <AppContext.Provider value={{ darkMode, toggleDarkMode }}>
-            <div
-                className={`p-4 ${
-                    darkMode ? "bg-black text-white" : "bg-white text-black"
-                }`}
-            >
-                Dark Mode: {darkMode ? "On" : "Off"}
-                {children}
-            </div>
+            {children}
         </AppContext.Provider>
     );
-};
+}
 
-export const useAppContext = () => {
+export function useAppContext() {
     const context = useContext(AppContext);
     if (context === undefined) {
         throw new Error("useAppContext must be used within an AppProvider");
     }
     return context;
-};
+}

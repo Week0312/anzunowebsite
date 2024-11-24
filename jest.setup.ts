@@ -1,36 +1,35 @@
 import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from "util";
+import { LocalStorage } from "node-localstorage";
 
-// グローバルなモック設定
-jest.mock("next/navigation", () => ({
-    useRouter() {
-        return {
-            push: jest.fn(),
-            replace: jest.fn(),
-            pathname: "",
-        };
-    },
-    useSearchParams() {
-        return new URLSearchParams();
-    },
-}));
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder as any;
 
-// 環境変数の設定
-process.env.NEXT_PUBLIC_API_URL = "http://localhost:3000";
+// Mock localStorage
+const localStorage = new LocalStorage("./scratch");
+global.localStorage = localStorage;
 
-// コンソールエラーの抑制（必要に応じて）
+// Clean up after each test
+afterEach(() => {
+    localStorage.clear();
+});
+
+// Console error/warning suppression for cleaner test output
 const originalError = console.error;
+const originalWarn = console.warn;
+
 beforeAll(() => {
     console.error = (...args: any[]) => {
-        if (
-            typeof args[0] === "string" &&
-            args[0].includes("Warning: ReactDOM.render is no longer supported")
-        ) {
-            return;
-        }
+        if (args[0].includes("Warning:")) return;
         originalError.call(console, ...args);
+    };
+    console.warn = (...args: any[]) => {
+        if (args[0].includes("Warning:")) return;
+        originalWarn.call(console, ...args);
     };
 });
 
 afterAll(() => {
     console.error = originalError;
+    console.warn = originalWarn;
 });

@@ -1,59 +1,62 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Product } from "@/lib/products";
 
-interface CartItem extends Product {
+interface CartItem {
+    id: string;
+    name: string;
+    price: string;
+    description: string;
+    image: string;
     quantity: number;
 }
 
 interface CartContextType {
     cart: CartItem[];
-    addToCart: (product: Product) => void;
+    addToCart: (product: Omit<CartItem, "quantity">) => void;
     removeFromCart: (productId: string) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     clearCart: () => void;
-    totalItems: number;
-    totalPrice: number;
+    getTotalItems: () => number;
+    getTotalPrice: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>(() => {
-        // クライアントサイドでのみローカルストレージを使用
         if (typeof window !== "undefined") {
-            const savedCart = localStorage.getItem("cart");
-            return savedCart ? JSON.parse(savedCart) : [];
+            try {
+                const savedCart = localStorage.getItem("cart");
+                return savedCart ? JSON.parse(savedCart) : [];
+            } catch {
+                return [];
+            }
         }
         return [];
     });
 
-    // カートの合計数と合計金額を計算
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = cart.reduce(
-        (sum, item) =>
-            sum + Number(item.price.replace(/[^0-9.-]+/g, "")) * item.quantity,
-        0
-    );
-
-    // カートの変更をローカルストレージに保存
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cart));
+        if (typeof window !== "undefined") {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
     }, [cart]);
 
-    const addToCart = (product: Product) => {
+    const addToCart = (product: Omit<CartItem, "quantity">) => {
         setCart((currentCart) => {
-            const existingItem = currentCart.find(
+            const existingItemIndex = currentCart.findIndex(
                 (item) => item.id === product.id
             );
-            if (existingItem) {
-                return currentCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
+
+            if (existingItemIndex !== -1) {
+                const newCart = [...currentCart];
+                newCart[existingItemIndex] = {
+                    ...newCart[existingItemIndex],
+                    quantity: newCart[existingItemIndex].quantity + 1,
+                };
+                return newCart;
             }
+
             return [...currentCart, { ...product, quantity: 1 }];
         });
     };
@@ -78,6 +81,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const clearCart = () => {
         setCart([]);
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("cart");
+        }
+    };
+
+    const getTotalItems = () => {
+        return cart.reduce((total, item) => total + item.quantity, 0);
+    };
+
+    const getTotalPrice = () => {
+        return cart.reduce((total, item) => {
+            const price = parseInt(item.price.replace(/[^0-9-]+/g, ""), 10);
+            return total + price * item.quantity;
+        }, 0);
     };
 
     return (
@@ -88,8 +105,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 removeFromCart,
                 updateQuantity,
                 clearCart,
-                totalItems,
-                totalPrice,
+                getTotalItems,
+                getTotalPrice,
             }}
         >
             {children}
