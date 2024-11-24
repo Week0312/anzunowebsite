@@ -39,4 +39,9 @@ const config = {
     },
 };
 
-export default config;
+// export default config; の代わりに
+module.exports = {
+    // 既存の設定内容をここに
+    testEnvironment: "jsdom",
+    // 他の設定...
+};
