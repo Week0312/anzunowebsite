@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react";
-import { useAppContext, AppProvider } from "@/context/AppContext";
+import { useAppContext, AppProvider } from "../../context/AppContext";
 
 describe("AppContext", () => {
     it("should toggle dark mode", () => {

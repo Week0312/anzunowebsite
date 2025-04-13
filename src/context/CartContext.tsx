@@ -2,18 +2,24 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-interface CartItem {
+// 商品の型定義
+interface Product {
     id: string;
     name: string;
     price: string;
     description: string;
     image: string;
+}
+
+// カート内の商品の型定義
+interface CartItem extends Product {
     quantity: number;
 }
 
+// カートコンテキストの型定義
 interface CartContextType {
     cart: CartItem[];
-    addToCart: (product: Omit<CartItem, "quantity">) => void;
+    addToCart: (product: Product) => void;
     removeFromCart: (productId: string) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     clearCart: () => void;
@@ -21,80 +27,78 @@ interface CartContextType {
     getTotalPrice: () => number;
 }
 
+// カートコンテキストの作成
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-    const [cart, setCart] = useState<CartItem[]>(() => {
-        if (typeof window !== "undefined") {
-            try {
-                const savedCart = localStorage.getItem("cart");
-                return savedCart ? JSON.parse(savedCart) : [];
-            } catch {
-                return [];
-            }
-        }
-        return [];
-    });
+// カートプロバイダーの型定義
+interface CartProviderProps {
+    children: React.ReactNode;
+}
 
+// カートプロバイダーコンポーネント
+export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+    const [cart, setCart] = useState<CartItem[]>([]);
+
+    // ローカルストレージからカートの状態を読み込む
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            localStorage.setItem("cart", JSON.stringify(cart));
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+            setCart(JSON.parse(savedCart));
         }
+    }, []);
+
+    // カートの状態が変更されたらローカルストレージに保存
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
 
-    const addToCart = (product: Omit<CartItem, "quantity">) => {
-        setCart((currentCart) => {
-            const existingItemIndex = currentCart.findIndex(
+    // カートに商品を追加
+    const addToCart = (product: Product) => {
+        setCart((prevCart) => {
+            const existingItem = prevCart.find(
                 (item) => item.id === product.id
             );
-
-            if (existingItemIndex !== -1) {
-                const newCart = [...currentCart];
-                newCart[existingItemIndex] = {
-                    ...newCart[existingItemIndex],
-                    quantity: newCart[existingItemIndex].quantity + 1,
-                };
-                return newCart;
+            if (existingItem) {
+                return prevCart.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
             }
-
-            return [...currentCart, { ...product, quantity: 1 }];
+            return [...prevCart, { ...product, quantity: 1 }];
         });
     };
 
+    // カートから商品を削除
     const removeFromCart = (productId: string) => {
-        setCart((currentCart) =>
-            currentCart.filter((item) => item.id !== productId)
-        );
+        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
     };
 
+    // 商品の数量を更新
     const updateQuantity = (productId: string, quantity: number) => {
-        if (quantity < 1) {
-            removeFromCart(productId);
-            return;
-        }
-        setCart((currentCart) =>
-            currentCart.map((item) =>
+        setCart((prevCart) =>
+            prevCart.map((item) =>
                 item.id === productId ? { ...item, quantity } : item
             )
         );
     };
 
+    // カートを空にする
     const clearCart = () => {
         setCart([]);
-        if (typeof window !== "undefined") {
-            localStorage.removeItem("cart");
-        }
     };
 
+    // カート内の商品の合計数を計算
     const getTotalItems = () => {
         return cart.reduce((total, item) => total + item.quantity, 0);
     };
 
+    // カート内の商品の合計金額を計算
     const getTotalPrice = () => {
-        return cart.reduce((total, item) => {
-            const price = parseInt(item.price.replace(/[^0-9-]+/g, ""), 10);
-            return total + price * item.quantity;
-        }, 0);
+        return cart.reduce(
+            (total, item) => total + Number(item.price) * item.quantity,
+            0
+        );
     };
 
     return (
@@ -112,12 +116,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             {children}
         </CartContext.Provider>
     );
-}
+};
 
-export function useCart() {
+// カートコンテキストを使用するためのカスタムフック
+export const useCart = () => {
     const context = useContext(CartContext);
     if (context === undefined) {
         throw new Error("useCart must be used within a CartProvider");
     }
     return context;
-}
+};
