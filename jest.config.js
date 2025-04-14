@@ -13,6 +13,7 @@ module.exports = {
         "<rootDir>/node_modules/",
         "<rootDir>/.next/",
         "<rootDir>/dist/",
+        "babel\\.config\\.test\\.js$",
     ],
     transform: {
         "^.+\\.(ts|tsx)$": [
