@@ -8,21 +8,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
     reactStrictMode: true,
     swcMinify: true,
-
     experimental: {
         optimizeCss: true,
-        outputFileTracingRoot: undefined,
     },
-
-    // experimentalから移動してcacheHandlerとして設定
-    cacheHandler: join(__dirname, "./src/lib/cache-handler.mjs"),
-
     images: {
         formats: ["image/avif", "image/webp"],
-        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     },
-
     webpack: (config, { dev, isServer }) => {
         if (dev && !isServer) {
             config.optimization = {
