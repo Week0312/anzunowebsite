@@ -15,6 +15,9 @@ module.exports = {
         "<rootDir>/dist/",
     ],
     transform: {
-        "^.+\\.(ts|tsx)$": "babel-jest",
+        "^.+\\.(ts|tsx)$": [
+            "babel-jest",
+            { configFile: "./babel.config.test.js" },
+        ],
     },
 };
