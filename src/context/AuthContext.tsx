@@ -1,32 +1,58 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useState, ReactNode } from "react";
+"use client";
 
-interface User {
-    id: string;
-    email: string;
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
+import { User } from "@prisma/client";
+
+interface ExtendedUser extends User {
+    name?: string;
+    address?: string;
+    phone?: string;
 }
 
 interface AuthContextType {
-    user: User | null;
-    isAuthenticated: boolean; // これを追加
+    user: ExtendedUser | null;
+    loading: boolean;
     login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
-    isLoading: boolean;
+    logout: () => Promise<void>;
+    updateUser: (userData: Partial<ExtendedUser>) => void;
+    isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [user, setUser] = useState<ExtendedUser | null>(null);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
-    // userの状態に基づいてisAuthenticatedを計算
-    const isAuthenticated = user !== null;
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const checkAuth = async () => {
+        try {
+            const response = await fetch("/api/auth/me");
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+            }
+        } catch (error) {
+            console.error("Auth check failed:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const login = async (email: string, password: string) => {
         try {
-            setIsLoading(true);
-            // ログイン処理
             const response = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: {
@@ -36,26 +62,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
 
             if (!response.ok) {
-                throw new Error("Login failed");
+                const error = await response.json();
+                throw new Error(error.message || "ログインに失敗しました");
             }
 
             const userData = await response.json();
             setUser(userData);
+            router.push("/");
         } catch (error) {
             console.error("Login error:", error);
             throw error;
-        } finally {
-            setIsLoading(false);
         }
     };
 
-    const logout = () => {
-        setUser(null);
+    const logout = async () => {
+        try {
+            await fetch("/api/auth/logout", {
+                method: "POST",
+            });
+            setUser(null);
+            router.push("/auth/login");
+        } catch (error) {
+            console.error("Logout error:", error);
+            throw error;
+        }
+    };
+
+    const updateUser = (userData: Partial<ExtendedUser>) => {
+        setUser((prev) => (prev ? { ...prev, ...userData } : null));
     };
 
     return (
         <AuthContext.Provider
-            value={{ user, isAuthenticated, login, logout, isLoading }}
+            value={{
+                user,
+                loading,
+                login,
+                logout,
+                updateUser,
+                isAuthenticated: !!user,
+            }}
         >
             {children}
         </AuthContext.Provider>

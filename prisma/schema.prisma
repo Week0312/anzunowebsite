@@ -14,33 +14,42 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  email             String   @unique
-  username          String?
-  password          String?
-  confirmationToken String?
-  isConfirmed       Boolean  @default(false)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  orders            Order[] // この行を追加
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  address   String?
+  phone     String?
+  role      String   @default("user") // user, admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  cart      Cart?
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  description String?
-  price       Decimal     @db.Decimal(10, 2)
-  stock       Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  description String
+  price       Float
+  stock       Int      @default(0)
+  imageUrl    String?
+  category    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   orderItems  OrderItem[]
+  cartItems   CartItem[]
 }
 
 model Order {
   id        Int         @id @default(autoincrement())
   userId    Int
   user      User        @relation(fields: [userId], references: [id])
-  status    String
+  status    String      @default("pending") // pending, processing, shipped, delivered, cancelled
+  total     Float
+  address   String
+  phone     String
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   items     OrderItem[]
@@ -53,5 +62,25 @@ model OrderItem {
   productId Int
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  price     Float
+}
+
+model Cart {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cartId    Int
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
