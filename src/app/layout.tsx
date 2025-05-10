@@ -6,10 +6,11 @@ import { CartProvider } from "../context/CartContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ClientLayout from "./ClientLayout";
-import "./globals.css";
+import "../styles/globals.css";
 import Link from "next/link";
 import { AuthProvider } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";
+import { Toaster } from "react-hot-toast";
 
 // [変更] フォントの設定を更新
 const inter = Inter({
@@ -50,6 +51,7 @@ export default function RootLayout({
                             </ClientLayout>
                         </CartProvider>
                     </AppProvider>
+                    <Toaster />
                 </AuthProvider>
             </body>
         </html>
