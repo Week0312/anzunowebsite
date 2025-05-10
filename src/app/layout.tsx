@@ -6,7 +6,7 @@ import { CartProvider } from "../context/CartContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ClientLayout from "./ClientLayout";
-import "../styles/globals.css";
+import "./globals.css";
 import Link from "next/link";
 import { AuthProvider } from "@/context/AuthContext";
 import Navigation from "@/components/Navigation";
